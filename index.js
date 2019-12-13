@@ -41,13 +41,17 @@ class Airplane {
 */
 
 class Person {
-  constructor(attributes) {
-    this.name = attributes.name;
-    this.age = attributes.age;
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
     this.stomach = [];
   }
   eat(someFood) {
-    this.stomach.push(someFood)
+    if (this.stomach.length < 10) {
+      this.stomach.push(someFood);
+    } else {
+      `${this.name} is full and cannot eat anymore`;
+    }
   }
   poop() {
     this.stomach = [];
@@ -73,9 +77,9 @@ class Person {
 */
 
 class Car {
-  constructor(attributes) {
-    this.model = attributes.model;
-    this.milesPerGallon = attributes.milesPerGallon;
+  constructor(model, milesPerGallon) {
+    this.model = model;
+    this.milesPerGallon = milesPerGallon;
     this.tank = 0
     this.odometer = 0
   }
@@ -83,16 +87,17 @@ class Car {
     this.tank = this.tank + gallons;
   }
   drive(distance) {
-    let range = this.tank / this.milesPerGallon;
-    if (distance < range) {
-      this.odometer = this.odometer + distance;
-      this.tank = this.tank - distance / this.milesPerGallon;
-    } else {
-      this.odometer = this.odometer + range;
+    let fuelUsed = distance / this.milesPerGallon;
+    let range = this.tank * this.milesPerGallon;
+    if (distance > range) {
       this.tank = 0;
-      return `I ran out of fuel at ${this.odometer} miles!`
+      this.odometer = this.odometer + range;
+      return `I ran out of fuel at ${this.odometer} miles!`;
+    } else {
+      this.tank = this.tank - fuelUsed;
+      this.odometer = this.odometer + distance;
     }
-  }
+  };
 }
 
 /*
@@ -132,6 +137,16 @@ class Lambdasian {
         + `demo` receives a `subject` string as an argument and returns the phrase 'Today we are learning about {subject}' where subject is the param passed in.
         + `grade` receives a `student` object and a `subject` string as arguments and returns '{student.name} receives a perfect score on {subject}'
 */
+
+/*
+  STRETCH PROBLEM (no tests!)
+    - Extend the functionality of the Student by adding a prop called grade and setting it equal to a number between 1-100.
+    - Now that our students have a grade build out a method on the Instructor (this will be used by _BOTH_ instructors and PM's) that will 
+    randomly add or subtract points to a student's grade. _Math.random_ will help.
+    - Add a graduate method to a student.
+      + This method, when called, will check the grade of the student and see if they're ready to graduate from Lambda School
+      + If the student's grade is above a 70% let them graduate! Otherwise go back to grading their assignments to increase their score.
+*/
 class Instructor extends Lambdasian {
       constructor(instAttr) {
         super(instAttr);
@@ -145,7 +160,22 @@ class Instructor extends Lambdasian {
       grade(student, subject) {
         return `${student.name} receives a perfect score on ${subject}`
       }
+      changeGrade(student) {
+        let ranNum = Math.floor(Math.random() * 200) - 100;
+        student.grade = student.grade + ranNum;
+      }
+
 }
+let paceattr = {
+  name: `pace`,
+  age: 35,
+  location: `sanf fran`,
+  specialty: 'js',
+  favLanguage: 'less',
+  catchPhrase: 'i love you'
+}
+let pace = new Instructor(paceattr);
+console.log(pace);
 
 /*
   TASK 5
@@ -168,9 +198,10 @@ class Student extends Lambdasian {
     this.previousBackground = studAttr.previousBackground;
     this.className = studAttr.className;
     this.favSubjects = studAttr.favSubjects;
+    this.grade = 70;
   }
   listSubjects() {
-    return `Loving ${this.favSubjects.split(", ")}`;
+    return `Loving ${this.favSubjects.toString().split(" ")}`;
   }
   PRAssignment(subject) {
     return `${this.name} has submitted a PR for ${subject} `
@@ -178,9 +209,30 @@ class Student extends Lambdasian {
   sprintChallenge(subject) {
     return `${this.name} has begun sprint challenge on ${subject}`
   }
+  graduate() {
+    if (this.grade >= 70) {
+      return `Congratulations, you have graduated from Lambda School!`
+    } else {
+      return `Your grade of ${this.grade} is not sufficient to graduate. Please flex lessons to improve your grade.`
+    }
+  }
 
 }
 
+let jonattr = {
+  name: `jon`,
+  age: 34,
+  location: `japan`,
+  previousBackground: 'teacher',
+  className: 'web13pt',
+  favSubjects: ['hacking', `callback functions`, 'class constructors']
+}
+let jon = new Student(jonattr) 
+console.log(jon);
+pace.changeGrade(jon);
+
+console.log(jon);
+console.log(jon.graduate());
 /*
   TASK 6
     - Write a ProjectManager class extending Instructor.
@@ -211,7 +263,8 @@ class ProjectManager extends Instructor {
 /*
   STRETCH PROBLEM (no tests!)
     - Extend the functionality of the Student by adding a prop called grade and setting it equal to a number between 1-100.
-    - Now that our students have a grade build out a method on the Instructor (this will be used by _BOTH_ instructors and PM's) that will randomly add or subtract points to a student's grade. _Math.random_ will help.
+    - Now that our students have a grade build out a method on the Instructor (this will be used by _BOTH_ instructors and PM's) that will 
+    randomly add or subtract points to a student's grade. _Math.random_ will help.
     - Add a graduate method to a student.
       + This method, when called, will check the grade of the student and see if they're ready to graduate from Lambda School
       + If the student's grade is above a 70% let them graduate! Otherwise go back to grading their assignments to increase their score.
